@@ -2,43 +2,46 @@ import { useState } from "react";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Register() {
   const navigate = useNavigate();
 
+  const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      const res = await api.post("/login", {
+      await api.post("/register", {
+        name,
         username,
         password,
       });
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      // ARAHKAN SESUAI ROLE
-      if (res.data.user.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/siswa");
-      }
+      alert("Register berhasil, silakan login");
+      navigate("/login");
     } catch (err) {
-      setError("Username atau password salah");
+      setError("Register gagal, username mungkin sudah digunakan");
     }
   };
 
   return (
     <div style={styles.container}>
-      <form onSubmit={handleLogin} style={styles.card}>
-        <h2>Login Perpustakaan</h2>
+      <form onSubmit={handleRegister} style={styles.card}>
+        <h2>Register Siswa</h2>
 
         {error && <p style={styles.error}>{error}</p>}
+
+        <input
+          type="text"
+          placeholder="Nama Lengkap"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
 
         <input
           type="text"
@@ -56,15 +59,15 @@ export default function Login() {
           required
         />
 
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
 
         <p style={{ fontSize: 14 }}>
-          Belum punya akun?{" "}
+          Sudah punya akun?{" "}
           <span
             style={{ color: "blue", cursor: "pointer" }}
-            onClick={() => navigate("/register")}
+            onClick={() => navigate("/login")}
           >
-            Register
+            Login
           </span>
         </p>
       </form>
@@ -81,7 +84,7 @@ const styles = {
     background: "#f0f2f5",
   },
   card: {
-    width: "300px",
+    width: "320px",
     padding: "20px",
     background: "#fff",
     borderRadius: "8px",

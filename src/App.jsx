@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import AdminDashboard from "./pages/AdminDashboard";
 import SiswaDashboard from "./pages/SiswaDashboard";
 
@@ -48,6 +49,18 @@ export default function App() {
           }
         />
 
+        {/* REGISTER */}
+        <Route
+          path="/register"
+          element={
+            isAuthenticated() ? (
+              <Navigate to="/login" />
+            ) : (
+              <Register />
+            )
+          }
+        />
+
         {/* ADMIN */}
         <Route
           path="/admin"
@@ -69,10 +82,7 @@ export default function App() {
         />
 
         {/* DEFAULT */}
-        <Route
-          path="*"
-          element={<Navigate to="/login" replace />}
-        />
+        <Route path="*" element={<Navigate to="/login" replace />} />
 
       </Routes>
     </BrowserRouter>
