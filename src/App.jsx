@@ -1,83 +1,42 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import AdminLogin from "./pages/AdminLogin";
+
 import AdminDashboard from "./pages/AdminDashboard";
 import SiswaDashboard from "./pages/SiswaDashboard";
 
-// CEK LOGIN
-const isAuthenticated = () => {
-  return localStorage.getItem("token") !== null;
-};
-
-// CEK ROLE
-const getRole = () => {
-  const user = localStorage.getItem("user");
-  return user ? JSON.parse(user).role : null;
-};
-
-// PROTECTED ROUTE
-const ProtectedRoute = ({ children, role }) => {
-  if (!isAuthenticated()) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (role && getRole() !== role) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
-};
+import AdminRoute from "./routes/AdminRoute";
+import SiswaRoute from "./routes/SiswaRoute";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
 
-        {/* LOGIN */}
-        <Route
-          path="/login"
-          element={
-            isAuthenticated() ? (
-              getRole() === "admin" ? (
-                <Navigate to="/admin" />
-              ) : (
-                <Navigate to="/siswa" />
-              )
-            ) : (
-              <Login />
-            )
-          }
-        />
+        {/* SISWA */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-        {/* REGISTER */}
         <Route
-          path="/register"
+          path="/siswa"
           element={
-            isAuthenticated() ? (
-              <Navigate to="/login" />
-            ) : (
-              <Register />
-            )
+            <SiswaRoute>
+              <SiswaDashboard />
+            </SiswaRoute>
           }
         />
 
         {/* ADMIN */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+
         <Route
           path="/admin"
           element={
-            <ProtectedRoute role="admin">
+            <AdminRoute>
               <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* SISWA */}
-        <Route
-          path="/siswa"
-          element={
-            <ProtectedRoute role="siswa">
-              <SiswaDashboard />
-            </ProtectedRoute>
+            </AdminRoute>
           }
         />
 
